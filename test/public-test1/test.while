@@ -1,0 +1,7 @@
+
+proc f(n) { 1+n+1 };
+q := 2;
+m := 1;
+print f(m);
+print f(q)
+

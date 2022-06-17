@@ -1,0 +1,15 @@
+
+proc fib(n)
+{
+    i := 1;
+    a := 1;
+    b := 0;
+    while i < n {
+      i := i + 1;
+      a := a + b;
+      b := a - b
+    };
+    a
+};
+
+print fib(11)
