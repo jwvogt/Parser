@@ -10,47 +10,40 @@ from syntax import *
 
 
 def lex(s):
-    toks = []
-    m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
-    m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
-    m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
-    m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
-    
-    while m1 != None or m2 != None or m3 != None or m4 != None:
+    def match_groups(s):
+        m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
+        m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
+        m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
+        m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
+        return m1, m2, m3, m4
 
-        while m1 != None:
+    toks = []
+    m1, m2, m3, m4 = match_groups(s)
+    
+    while m1 is not None or m2 is not None or m3 is not None or m4 is not None:
+
+        while m1 is not None:
             toks.append(m1.group(1))
             s = s[len(m1.group(0)):]
-            m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
-            m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
-            m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
-            m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
-        while m2 != None:
+            m1, m2, m3, m4 = match_groups(s)
+        while m2 is not None:
             toks.append(m2.group(1))
             s = s[len(m2.group(0)):]
-            m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
-            m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
-            m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
-            m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
-        while m3 != None:
+            m1, m2, m3, m4 = match_groups(s)
+        while m3 is not None:
             toks.append(m3.group(1))
             s = s[len(m3.group(0)):]
-            m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
-            m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
-            m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
-            m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
-        while m4 != None:
+            m1, m2, m3, m4 = match_groups(s)
+        while m4 is not None:
             toks.append(m4.group(1))
             s = s[len(m4.group(0)):]
-            m1 = re.match(r'^\s*(([a-z]|[A-Z]|\_)([a-z]|[A-Z]|[0-9])*)', s)
-            m2 = re.match(r'^\s*([0-9]*\.?[0-9]+)', s)
-            m3 = re.match(r'^\s*(proc|if|else|while|print)', s)
-            m4 = re.match(r'^\s*(\+|\-|\/|\*|\^|\,|\:|\=|\<|\{|\}|\(|\)|\;)', s)
+            m1, m2, m3, m4 = match_groups(s)
     return toks
 
 def parse(toks):
     # TODO: parse and return an AST node or ErrorMsg object
     def peek(n):
+        # looks at next token in toks
         nonlocal toks
         if n < len(toks):
             return toks[n]
@@ -61,7 +54,7 @@ def parse(toks):
         if peek(0) == tok:
             toks = toks[1:]
         else:
-            print('Error, expected token "'+str(tok)+'", got: "'+str(toks)+'"')
+            print('Error, expected token "' + str(tok) + '", got: "' + str(toks) + '"')
             exit(1)
     
     def parseP():
@@ -227,6 +220,9 @@ def parse(toks):
 
     return parseP()
 
+
+# Some example tests:
+#
 # print(parse(lex('proc test() {print 7 < 6; print 4 < 5}; test()')).run())
 # print(parse(lex('proc assign(a, b){ a := b := 0 }; sum1 := 100; sum2 := 100; print assign(sum1,sum2)')).run())
 # print(parse(lex('proc sum(n,s){sum := i := 0; while i < n {i := i+s;sum := sum + i};sum};n := 100;step := 0.5;print sum(n,step)')).run())
